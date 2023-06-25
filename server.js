@@ -20,12 +20,12 @@ const server = app.listen(8000, () => {
 const io = socket(server);
 
 io.on('connection', (socket) => {
-	console.log('New client! Its id – ' + socket.id);
 	socket.on('join', (userName) => {
-		console.log(userName + ', ' + socket.id + ' has entered the chat');
-
+		socket.broadcast.emit('message', {
+			author: 'Chat Bot',
+			content: userName + ' has joined the chat!',
+		});
 		users.push({ name: userName, id: socket.id });
-		console.log(users);
 	});
 	socket.on('message', (message) => {
 		messages.push(message);
@@ -34,8 +34,12 @@ io.on('connection', (socket) => {
 
 	socket.on('disconnect', () => {
 		const userIndex = users.findIndex((user) => user.id === socket.id);
-
-		users.splice(userIndex, 1);
-		console.log('Oh, socket ' + socket.id + ' has left');
+		if (userIndex !== -1) {
+			const userLeft = users.splice(userIndex, 1)[0];
+			socket.broadcast.emit('message', {
+				author: 'Chat Bot',
+				content: userLeft.name + ' has left the chat!',
+			});
+		}
 	});
 });
