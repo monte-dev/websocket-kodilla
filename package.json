@@ -1,0 +1,17 @@
+{
+	"name": "websocket-1",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "git@github.com:monte-dev/websocket-kodilla.git",
+	"author": "monte-dev <badziobw@gmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"express": "^4.18.2"
+	},
+	"scripts": {
+		"start": "nodemon server.js"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.22"
+	}
+}
