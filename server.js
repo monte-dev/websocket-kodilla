@@ -7,6 +7,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, '/client/')));
 
 const messages = [];
+const users = [];
 
 app.get('*', (req, res) => {
 	res.sendFile(path.join(__dirname, '/client/index.html'));
@@ -20,14 +21,21 @@ const io = socket(server);
 
 io.on('connection', (socket) => {
 	console.log('New client! Its id – ' + socket.id);
+	socket.on('join', (userName) => {
+		console.log(userName + ', ' + socket.id + ' has entered the chat');
+
+		users.push({ name: userName, id: socket.id });
+		console.log(users);
+	});
 	socket.on('message', (message) => {
-		console.log("Oh, I've got something from " + socket.id);
 		messages.push(message);
 		socket.broadcast.emit('message', message);
 	});
+
 	socket.on('disconnect', () => {
+		const userIndex = users.findIndex((user) => user.id === socket.id);
+
+		users.splice(userIndex, 1);
 		console.log('Oh, socket ' + socket.id + ' has left');
 	});
-	console.log("I've added a listener on message and disconnect events \n");
-	console.log("I've added a listener on message event \n");
 });
